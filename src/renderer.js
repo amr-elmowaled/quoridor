@@ -1,5 +1,4 @@
-import { getCurrentPlayer, getLegibleMoves, makeMove,
-     initialize, makeWall, isLegalWallPlacement } from './model.js';
+import { Game } from './model.js';
 
 const boardElement = document.getElementById('game-board');
 const aiToggle = document.getElementById('ai-toggle');
@@ -8,16 +7,18 @@ const aiToggle = document.getElementById('ai-toggle');
 let isAiEnabled = false;
 let gameFinished = false;
 let hoveredWall = null;
+let game = new Game();
 let wall_cnt = [10, 10];
 let legalMoves = [];
 
+
 window.onload = () => {
+
     createBoard();
-    initialize();
     placePawn(0, 4, 'p2'); 
     placePawn(8, 4, 'p1'); 
 
-    legalMoves = getLegibleMoves();
+    legalMoves = game.getLegibleMoves();
     legalMoves.forEach((move) => {
       placePawn(...move, 'potential-move');
       getCell(...move).classList.add('clickable');
@@ -195,20 +196,20 @@ function disableOverlappingWalls(wallDiv) {
 function handleWallClick(wallDiv) {
     if (wallDiv.classList.contains('placed') || wallDiv.classList.contains('disabled') || gameFinished) return;
     
-    if(wall_cnt[getCurrentPlayer()-1]-1 < 0) {
+    if(wall_cnt[game.getCurrentPlayer()-1]-1 < 0) {
       window.API.showInfobox('invalid move', 'you are out of walls !');
       return;
     }
     
     const type = wallDiv.dataset.type, r = wallDiv.dataset.r, c = wallDiv.dataset.c;
 
-    if(!isLegalWallPlacement(r,c,type)) {
+    if(!game.isLegalWallPlacement(r,c,type)) {
         window.API.showInfobox('illegal move', "walls can't be placed in such a way that traps either players");
         return;
     }
     
-    document.getElementById(`p${getCurrentPlayer()}-walls`).textContent = `${--wall_cnt[getCurrentPlayer()-1]}`;
-    makeWall(r,c,type);
+    document.getElementById(`p${game.getCurrentPlayer()}-walls`).textContent = `${--wall_cnt[game.getCurrentPlayer()-1]}`;
+    game.makeWall(r,c,type);
 
     const walls = getWallGroup(wallDiv);
     walls.forEach(w => {
@@ -246,13 +247,15 @@ function handleReset() {
             wall.onclick = () => handleWallClick(wall);
         }
     });
-    
+
+    document.querySelectorAll('.clickable').forEach(cell => cell.classList.remove('clickable'));
+
     document.querySelectorAll('.wall-h[data-c="8"], .wall-v[data-r="8"]').forEach(wall => {
         wall.classList.add('disabled');
     });
     
     gameFinished = false;
-    initialize();
+    game = new Game();
     placePawn(0, 4, 'p2'); 
     placePawn(8, 4, 'p1'); 
     
@@ -260,7 +263,7 @@ function handleReset() {
     document.getElementById('p2-walls').textContent = '10';
     document.getElementById('p1-walls').textContent = '10';
 
-    legalMoves = getLegibleMoves();
+    legalMoves = game.getLegibleMoves();
     legalMoves.forEach((move) => {
       placePawn(...move, 'potential-move');
       getCell(...move).classList.add('clickable');
@@ -280,14 +283,14 @@ function handleCellClick(cellDiv) {
     const r = parseInt(cellDiv.dataset.r);
     const c = parseInt(cellDiv.dataset.c);
     
-    if(r === 0 && getCurrentPlayer() === 1|| r === 8 && getCurrentPlayer() === 2) {
-        window.API.showInfobox('game finished', `Player ${getCurrentPlayer()} wins !`);
+    if(r === 0 && game.getCurrentPlayer() === 1|| r === 8 && game.getCurrentPlayer() === 2) {
+        window.API.showInfobox('game finished', `Player ${game.getCurrentPlayer()} wins !`);
         gameFinished = true;
     }
 
-    makeMove(r, c);
-    document.getElementsByClassName(`p${3-getCurrentPlayer()}`)[0].remove();
-    placePawn(r, c, `p${3-getCurrentPlayer()}`);
+    game.makeMove(r, c);
+    document.getElementsByClassName(`p${3-game.getCurrentPlayer()}`)[0].remove();
+    placePawn(r, c, `p${3-game.getCurrentPlayer()}`);
 
     switchPlayer();
 }
@@ -300,11 +303,11 @@ function switchPlayer() {
   
   if(gameFinished) return;
 
-  document.getElementById(`p${3-getCurrentPlayer()}-status`).classList.remove('active');
-  document.getElementById(`p${getCurrentPlayer()}-status`).classList.add('active');
-  document.getElementById('game-message').textContent = `Player ${getCurrentPlayer()}'s turn`;
+  document.getElementById(`p${3-game.getCurrentPlayer()}-status`).classList.remove('active');
+  document.getElementById(`p${game.getCurrentPlayer()}-status`).classList.add('active');
+  document.getElementById('game-message').textContent = `Player ${game.getCurrentPlayer()}'s turn`;
 
-  legalMoves = getLegibleMoves();
+  legalMoves = game.getLegibleMoves();
     legalMoves.forEach((move) => {
       placePawn(...move, 'potential-move');
       getCell(...move).classList.add('clickable');
