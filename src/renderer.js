@@ -1,10 +1,12 @@
-import { getCurrentPlayer, getLegibleMoves, makeMove, initialize, makeHWall, makeVWall } from './model.js';
+import { getCurrentPlayer, getLegibleMoves, makeMove,
+     initialize, makeWall, isLegalWallPlacement } from './model.js';
 
 const boardElement = document.getElementById('game-board');
 const aiToggle = document.getElementById('ai-toggle');
 
 
 let isAiEnabled = false;
+let gameFinished = false;
 let hoveredWall = null;
 let wall_cnt = [10, 10];
 let legalMoves = [];
@@ -191,26 +193,24 @@ function disableOverlappingWalls(wallDiv) {
 }
 
 function handleWallClick(wallDiv) {
-    if (wallDiv.classList.contains('placed') || wallDiv.classList.contains('disabled')) return;
+    if (wallDiv.classList.contains('placed') || wallDiv.classList.contains('disabled') || gameFinished) return;
     
     if(wall_cnt[getCurrentPlayer()-1]-1 < 0) {
       window.API.showInfobox('invalid move', 'you are out of walls !');
       return;
     }
-
-
-    const walls = getWallGroup(wallDiv);
     
     const type = wallDiv.dataset.type, r = wallDiv.dataset.r, c = wallDiv.dataset.c;
 
-    document.getElementById(`p${getCurrentPlayer()}-walls`).textContent = `${--wall_cnt[getCurrentPlayer()-1]}`;
-
-    if(type === 'wall-h') {
-      makeHWall(r, c);
-    }else {
-      makeVWall(r, c);
+    if(!isLegalWallPlacement(r,c,type)) {
+        window.API.showInfobox('illegal move', "walls can't be placed in such a way that traps either players");
+        return;
     }
+    
+    document.getElementById(`p${getCurrentPlayer()}-walls`).textContent = `${--wall_cnt[getCurrentPlayer()-1]}`;
+    makeWall(r,c,type);
 
+    const walls = getWallGroup(wallDiv);
     walls.forEach(w => {
         w.classList.add('placed');
     });
@@ -251,6 +251,7 @@ function handleReset() {
         wall.classList.add('disabled');
     });
     
+    gameFinished = false;
     initialize();
     placePawn(0, 4, 'p2'); 
     placePawn(8, 4, 'p1'); 
@@ -276,12 +277,18 @@ function handleCellClick(cellDiv) {
         return;
     }
     
-    const r = cellDiv.dataset.r;
-    const c = cellDiv.dataset.c;
+    const r = parseInt(cellDiv.dataset.r);
+    const c = parseInt(cellDiv.dataset.c);
+    
+    if(r === 0 && getCurrentPlayer() === 1|| r === 8 && getCurrentPlayer() === 2) {
+        window.API.showInfobox('game finished', `Player ${getCurrentPlayer()} wins !`);
+        gameFinished = true;
+    }
 
     makeMove(r, c);
     document.getElementsByClassName(`p${3-getCurrentPlayer()}`)[0].remove();
     placePawn(r, c, `p${3-getCurrentPlayer()}`);
+
     switchPlayer();
 }
 
@@ -291,12 +298,13 @@ function switchPlayer() {
     p.remove();
   });
   
+  if(gameFinished) return;
+
   document.getElementById(`p${3-getCurrentPlayer()}-status`).classList.remove('active');
   document.getElementById(`p${getCurrentPlayer()}-status`).classList.add('active');
   document.getElementById('game-message').textContent = `Player ${getCurrentPlayer()}'s turn`;
 
   legalMoves = getLegibleMoves();
-  console.log(legalMoves);
     legalMoves.forEach((move) => {
       placePawn(...move, 'potential-move');
       getCell(...move).classList.add('clickable');
@@ -322,4 +330,4 @@ aiToggle.addEventListener('change', (e) => {
 });
 
 window.handleReset = handleReset;
-window.handleUndo = handleUndo;
+// window.handleUndo = handleUndo;

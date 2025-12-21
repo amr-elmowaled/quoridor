@@ -28,6 +28,7 @@
     "vite": "^5.4.21"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.1",
+    "js-priority-queue": "^0.1.5"
   }
 }
