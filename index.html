@@ -1,13 +1,73 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hello World!</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoridor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="src/index.css">
+    
+</head>
+<body>
 
-  </head>
-  <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
-    <script type="module" src="/src/renderer.js"></script>
-  </body>
+    <div class="app-container">
+        
+        <aside class="sidebar">
+            <div class="header">
+                <h1>Quoridor</h1>
+            </div>
+
+            <div class="status-card active" id="p1-status">
+                <div class="p-info">
+                    <span class="p-dot p1-dot"></span>
+                    <span class="p-name">Player 1</span>
+                </div>
+                <div class="wall-tracker">
+                    Walls: <b id="p1-walls">10</b>
+                </div>
+            </div>
+
+            <div class="status-card" id="p2-status">
+                <div class="p-info">
+                    <span class="p-dot p2-dot"></span>
+                    <span class="p-name">Player 2</span>
+                </div>
+                <div class="wall-tracker">
+                    Walls: <b id="p2-walls">10</b>
+                </div>
+            </div>
+
+            <div class="controls-area">
+                
+                <div class="toggle-wrapper">
+                    <label class="switch">
+                        <input type="checkbox" id="ai-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="toggle-label">Play vs AI</span>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn secondary" id="btn-undo" onclick="handleUndo()">
+                        <i class="fas fa-undo"></i> Undo
+                    </button>
+                    <button class="btn primary" id="btn-reset" onclick="handleReset()">
+                        New Game
+                    </button>
+                </div>
+                
+                <div id="game-message" class="message-box">
+                    Player 1's Turn
+                </div>
+            </div>
+        </aside>
+
+        <main class="board-container">
+            <div id="game-board" class="board-grid"></div>
+        </main>
+    </div>
+
+    <script type="module" src="src/renderer.js"></script>
+</body>
 </html>
