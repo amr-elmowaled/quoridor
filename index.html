@@ -48,10 +48,23 @@
                     <span class="toggle-label">Play vs AI</span>
                 </div>
 
+                <div class="depth-slider-wrapper">
+                    <div class="depth-label">
+                        <span>AI Difficulty / thinking depth</span>
+                        <span class="depth-value" id="depth-value">6</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        min="1" 
+                        max="10" 
+                        value="5" 
+                        class="depth-slider disabled" 
+                        id="depth-slider"
+                    >
+                    <div class="difficulty-hint" id="difficulty-hint">Mediocre</div>
+                </div>
+
                 <div class="button-group">
-                    <!-- <button class="btn secondary" id="btn-undo" onclick="handleUndo()">
-                        <i class="fas fa-undo"></i> Undo
-                    </button> -->
                     <button class="btn primary" id="btn-reset" onclick="handleReset()">
                         New Game
                     </button>
@@ -67,7 +80,43 @@
             <div id="game-board" class="board-grid"></div>
         </main>
     </div>
+    <script>
+        const aiToggle = document.getElementById('ai-toggle');
+        const depthSlider = document.getElementById('depth-slider');
+        const depthValue = document.getElementById('depth-value');
+        const difficultyHint = document.getElementById('difficulty-hint');
+        window.AI_DEPTH = 6;
+
+        const difficultyLabels = {
+            1: 'Very Easy',
+            2: 'Very Easy',
+            3: 'Easy',
+            4: 'Easy',
+            5: 'Mediocre',
+            6: 'Mediocre',
+            7: 'Hard',
+            8: 'Hard',
+            9: 'Expert',
+            10: 'Expert'
+        };
+
+        depthSlider.addEventListener('input', (e) => {
+            const value = e.target.value;
+            window.AI_DEPTH = value;
+            depthValue.textContent = value;
+            difficultyHint.textContent = difficultyLabels[value];
+        });
+
+        aiToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                depthSlider.classList.remove('disabled');
+            } else {
+                depthSlider.classList.add('disabled');
+            }
+        });
+    </script>
 
     <script type="module" src="src/renderer.js"></script>
+    
 </body>
 </html>

@@ -158,6 +158,10 @@ function disableWall(wall) {
   }
 }
 
+function getWall(r, c, t) {
+
+    return document.querySelector(`.wall-${t}[data-r='${r}'][data-c='${c}']`);
+}
 function disableOverlappingWalls(wallDiv) {
     const type = wallDiv.dataset.type;
     const r = parseInt(wallDiv.dataset.r);
@@ -165,31 +169,31 @@ function disableOverlappingWalls(wallDiv) {
     
     if (type === 'wall-h') {
         if (c > 0) {
-            const prevWall = document.querySelector(`.wall-h[data-r='${r}'][data-c='${c - 1}']`);
-            disableWall(prevWall);
+            //const prevWall = document.querySelector(`.wall-h[data-r='${r}'][data-c='${c - 1}']`);
+            disableWall(getWall(r, c-1, 'h'));
         }
         
         if (c < 7) {
-            const nextWall = document.querySelector(`.wall-h[data-r='${r}'][data-c='${c + 1}']`);
-            disableWall(nextWall);
+            //const nextWall = document.querySelector(`.wall-h[data-r='${r}'][data-c='${c + 1}']`);
+            disableWall(getWall(r, c+1,'h'));
         }
         
-        const vertWallAbove = document.querySelector(`.wall-v[data-r='${r}'][data-c='${c}']`);
-        disableWall(vertWallAbove);
+        //const vertWallAbove = document.querySelector(`.wall-v[data-r='${r}'][data-c='${c}']`);
+        disableWall(getWall(r, c,'v'));
         
     } else if (type === 'wall-v') {
         if (r > 0) {
-            const prevWall = document.querySelector(`.wall-v[data-r='${r - 1}'][data-c='${c}']`);
-            disableWall(prevWall);
+            //const prevWall = document.querySelector(`.wall-v[data-r='${r - 1}'][data-c='${c}']`);
+            disableWall(getWall(r-1, c, 'v'));
         }
         
         if (r < 7) {
-            const nextWall = document.querySelector(`.wall-v[data-r='${r + 1}'][data-c='${c}']`);
-            disableWall(nextWall);
+            //const nextWall = document.querySelector(`.wall-v[data-r='${r + 1}'][data-c='${c}']`);
+            disableWall(getWall(r+1, c, 'v'));
         }
         
-        const horizWallLeft = document.querySelector(`.wall-h[data-r='${r}'][data-c='${c}']`);
-        disableWall(horizWallLeft);
+        //const horizWallLeft = document.querySelector(`.wall-h[data-r='${r}'][data-c='${c}']`);
+        disableWall(getWall(r, c, 'h'));
     }
 }
 
@@ -275,8 +279,8 @@ function handleUndo() {
     console.log("Undo triggered");
 }
 
-function handleCellClick(cellDiv) {
-    if (!cellDiv.classList.contains('clickable')) {
+function handleCellClick(cellDiv, override=false) {
+    if (!cellDiv.classList.contains('clickable') && !override) {
         return;
     }
     
@@ -303,15 +307,26 @@ function switchPlayer() {
   
   if(gameFinished) return;
 
-  document.getElementById(`p${3-game.getCurrentPlayer()}-status`).classList.remove('active');
-  document.getElementById(`p${game.getCurrentPlayer()}-status`).classList.add('active');
-  document.getElementById('game-message').textContent = `Player ${game.getCurrentPlayer()}'s turn`;
+    document.getElementById(`p${3-game.getCurrentPlayer()}-status`).classList.remove('active');
+    document.getElementById(`p${game.getCurrentPlayer()}-status`).classList.add('active');
+    document.getElementById('game-message').textContent = `Player ${game.getCurrentPlayer()}'s turn`;
 
-  legalMoves = game.getLegibleMoves();
-    legalMoves.forEach((move) => {
-      placePawn(...move, 'potential-move');
-      getCell(...move).classList.add('clickable');
-    });
+    if(isAiEnabled && game.getCurrentPlayer() === 2) {
+        let [t, r, c] = game.makeAiMove(window.AI_DEPTH);
+        if(t === 'p') {
+            handleCellClick(getCell(r, c), true); 
+        }else {
+            handleWallClick(getWall(r,c, t));
+        }
+
+    } else {
+        legalMoves = game.getLegibleMoves();
+        legalMoves.forEach((move) => {
+            placePawn(...move, 'potential-move');
+            getCell(...move).classList.add('clickable');
+        });
+    }
+  
 }
 
 function getCell(r, c) {
@@ -330,6 +345,15 @@ function placePawn(r, c, playerClass) {
 
 aiToggle.addEventListener('change', (e) => {
     isAiEnabled = e.target.checked;
+    if(isAiEnabled && game.getCurrentPlayer() === 2) {
+        let [t, r, c] = game.makeAiMove(window.AI_DEPTH);
+        if(t === 'p') {
+            handleCellClick(getCell(r, c), true);
+        }else {
+            handleWallClick(getWall(r,c, t));
+        }
+
+    }
 });
 
 window.handleReset = handleReset;
