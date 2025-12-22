@@ -36,7 +36,7 @@ Rather than checking all possible wall placements—which would be computational
 - **AI difficulty control:** adjusting AI analysis depth (by default depth=6).
 
 
-## 📸 Screenshots
+## Screenshots
 
 > *gameplay examples*
 
@@ -45,7 +45,7 @@ Rather than checking all possible wall placements—which would be computational
 <img width="1018" height="742" alt="Screenshot 2025-12-22 at 3 26 03 PM" src="https://github.com/user-attachments/assets/0f06ccef-8e0d-42a0-a57f-ddf1a611bdef" />
 
 
-## 🚀 Installation & Running
+## Installation & Running
 you can easily access the web version here: https://quoridor-project.netlify.app/
 
 for the desktop App, make sure you have [npm installed](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), then do the following steps:
@@ -61,4 +61,6 @@ for the desktop App, make sure you have [npm installed](https://docs.npmjs.com/d
    ```bash
    npm start
    ```
-
+## Demo video
+video can be accessed through this link on google drive: 
+https://drive.google.com/file/d/1IHPFy9I5x_8GTmrPE1Js6gCVznzSfSbt/view?usp=sharing
