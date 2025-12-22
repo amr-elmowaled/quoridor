@@ -19,8 +19,7 @@ The project implements AI capable of strategic decision-making:
 
 ### 1. Minimax with Alpha-Beta Pruning
 The core AI uses a **Minimax** tree search to evaluate potential future game states.
-- **Alpha-Beta Pruning:** Optimizes the search by eliminating branches that cannot influence the final decision, significantly increasing search depth. priority queue is used to inspect highest return nodes first based on Heuristic Evaluation,
--  and thus maximizing pruning efficiency.
+- **Alpha-Beta Pruning:** Optimizes the search by eliminating branches that cannot influence the final decision, significantly increasing search depth. priority queue is used to inspect highest return nodes first based on Heuristic Evaluation, and thus maximizing pruning efficiency.
 - **Heuristic Evaluation:** Board states are scored based on relative wall counts, player turn advantage, and the difference in shortest-path distances to the goals for both players.
 
 ### 2. Pathfinding (A*)
