@@ -127,8 +127,6 @@ export class Game {
         const key = encodePos(r, c);
         if (visited.has(key)) continue;
         
-        if(p === 0) test.push([r,c]);
-        
         if (r === target) {
             return { shortestDist: cost, rootMove };
         }
