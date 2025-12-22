@@ -1,6 +1,5 @@
 import PriorityQueue from "js-priority-queue";
 
-export let test = [];
 
 export class Game {
 
