@@ -1,6 +1,6 @@
 # Quoridor - AI Strategy Board Game
 
-A complete desktop implementation of the abstract strategy board game **Quoridor**, developed for the CSE472s Artificial Intelligence course. This project features a professional GUI, a robust game logic engine, and an AI opponent powered by powerful search algorithms **that can reach a depth of up to 8-9 moves in just a few seconds**.
+A complete desktop implementation of the abstract strategy board game **Quoridor**, developed for the CSE472s Artificial Intelligence course. This project features a professional GUI, a robust game logic engine, and an AI opponent powered by powerful search algorithms **that can reach a depth of up to 8 moves in just a few seconds**.
 
 ##  Game Overview
 Quoridor is a $9 \times 9$ strategy game where the objective is to be the first to move your pawn to any square on the opposite side.
